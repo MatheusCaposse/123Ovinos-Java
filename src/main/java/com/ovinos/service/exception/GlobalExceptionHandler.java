@@ -5,33 +5,19 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.Instant;
+import java.util.HashMap;
+import java.util.Map;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(SheepException.class)
-    public ResponseEntity<StandardError> handleSheepException(
-            SheepException e) {
+    public ResponseEntity<Map<String, String>> sheepException(SheepException e) {
 
-        StandardError err = new StandardError(
-                Instant.now(),
-                HttpStatus.NOT_FOUND.value(),
-                e.getMessage()
-        );
+        Map<String, String> error = new HashMap<>();
 
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(err);
-    }
+        error.put("message", e.getMessage());
 
-    @ExceptionHandler(BatchException.class)
-    public ResponseEntity<StandardError> handleBatchException(
-            BatchException e) {
-
-        StandardError err = new StandardError(
-                Instant.now(),
-                HttpStatus.NOT_FOUND.value(),
-                e.getMessage()
-        );
-
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(err);
+        return ResponseEntity.badRequest().body(error);
     }
 }

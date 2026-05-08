@@ -37,6 +37,11 @@ public class SheepResource {
         return ResponseEntity.noContent().build();
     }
 
+    @PostMapping(value = "/create-sheep")
+    public ResponseEntity<Sheep> createSheep(@RequestBody SheepDTO sheep){
+        return ResponseEntity.ok().body(sheepService.createSheep(sheep));
+    }
+
     @GetMapping("/status/{sex}")
     public List<ConditionSheep> getStatusBySex(@PathVariable SheepSex sex) {
         return Arrays.stream(ConditionSheep.values())

@@ -3,6 +3,7 @@ package com.ovinos.service;
 import com.ovinos.DTO.*;
 import com.ovinos.entity.Enum.SheepSex;
 import com.ovinos.entity.Female;
+import com.ovinos.entity.Male;
 import com.ovinos.entity.auxiliarData.*;
 import com.ovinos.entity.superClass.Sheep;
 import com.ovinos.repository.*;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import java.text.SimpleDateFormat;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class SheepService {
@@ -37,23 +39,43 @@ public class SheepService {
     @Autowired
     private AcitivityRepository acitivityRepository;
 
-    public List<Sheep> findAll(){
+    public List<Sheep> findAll() {
         List<Sheep> list = repository.findAll();
         return list;
     }
 
-    public Sheep findById(String id){
+    public Sheep findById(String id) {
         Sheep obj = repository.findById(id).orElseThrow(() -> new SheepException("Animal não encontrado"));
         return obj;
     }
 
-    public void deleteById(String id){
-        Sheep sheep = repository.findById(id).orElseThrow(()-> new SheepException("Animal não encontrado"));
+    public void deleteById(String id) {
+        Sheep sheep = repository.findById(id).orElseThrow(() -> new SheepException("Animal não encontrado"));
         repository.delete(sheep);
     }
 
+    public Sheep createSheep(SheepDTO obj) {
+        Optional<Sheep> test = repository.findById(obj.getId());
+        if(test.isPresent()){
+            throw new SheepException("Já existe um animal com esse ID");
+        }
+
+        Sheep sheep;
+
+        if (obj.getBatch() != null) {
+            sheep = (obj.getSex() == SheepSex.FEMEA)
+                    ? new Female(obj.getId(), obj.getDataNascimento(), obj.getBatch())
+                    : new Male(obj.getId(), obj.getDataNascimento(), obj.getBatch());
+        } else {
+            sheep = (obj.getSex() == SheepSex.FEMEA)
+                    ? new Female(obj.getId(), obj.getDataNascimento())
+                    : new Male(obj.getId(), obj.getDataNascimento());
+        }
+        return repository.save(sheep);
+    }
+
     @Transactional
-    public void addCharacteristics(String id, CharacteristicsDTO characteristicsDTO){
+    public void addCharacteristics(String id, CharacteristicsDTO characteristicsDTO) {
         Sheep sheep = repository.findById(id).orElseThrow(() -> new SheepException("Animal não encontrado"));
 
         Characteristics characteristics = new Characteristics(characteristicsDTO.getStatus(), characteristicsDTO.getConditionSheep(), characteristicsDTO.getRaceSheep());
@@ -86,9 +108,9 @@ public class SheepService {
     }
 
     @Transactional
-    public void treatmentCompleted(String id){
-        Sheep sheep = repository.findById(id).orElseThrow(()-> new SheepException("Animal não encontrado"));
-        Treatment treatment = treatmentRepository.findById(sheep.getTreatment().getId()).orElseThrow(()-> new SheepException("Treatment not found"));
+    public void treatmentCompleted(String id) {
+        Sheep sheep = repository.findById(id).orElseThrow(() -> new SheepException("Animal não encontrado"));
+        Treatment treatment = treatmentRepository.findById(sheep.getTreatment().getId()).orElseThrow(() -> new SheepException("Treatment not found"));
         treatmentRepository.delete(treatment);
 
         sheep.setTreatmentCompleted(null);
@@ -96,7 +118,7 @@ public class SheepService {
     }
 
     @Transactional
-    public void addPregnancy(String id, PregnancyDTO dto){
+    public void addPregnancy(String id, PregnancyDTO dto) {
         Female female = femaleRepository.findById(id).orElseThrow(() -> new SheepException("Female not found"));
 
         Pregnancy pregnancy = new Pregnancy(dto.getTypeBirth(), dto.getIdPai());
@@ -107,10 +129,10 @@ public class SheepService {
     }
 
     @Transactional
-    public void addWeight(String id, WeightDTO dto){
-        Sheep sheep = repository.findById(id).orElseThrow(()-> new SheepException("Sheep not found"));
+    public void addWeight(String id, WeightDTO dto) {
+        Sheep sheep = repository.findById(id).orElseThrow(() -> new SheepException("Sheep not found"));
 
-        if(sheep.getWeight()==null){
+        if (sheep.getWeight() == null) {
             Weight weight = new Weight(dto.getCurrentWeight(), dto.getLastWeight(), dto.getCurrentWeighing(), dto.getFirstWeighing());
             sheep.setWeight(weight);
         } else {
@@ -125,10 +147,10 @@ public class SheepService {
     }
 
     @Transactional
-    public void addNote(String id, NotesDTO dto){
-        Sheep sheep = repository.findById(id).orElseThrow(()-> new SheepException("Sheep not found"));
+    public void addNote(String id, NotesDTO dto) {
+        Sheep sheep = repository.findById(id).orElseThrow(() -> new SheepException("Sheep not found"));
 
-        if (sheep.getNotes()==null){
+        if (sheep.getNotes() == null) {
             Notes notes = new Notes(dto.getNote(), dto.getAlert());
             sheep.setNotes(notes);
         } else {
@@ -142,10 +164,10 @@ public class SheepService {
 
     @Transactional
     public void addActivity(String id, ActivityDTO dto) {
-        Sheep sheep = repository.findById(id).orElseThrow(()-> new SheepException("Sheep not found"));
+        Sheep sheep = repository.findById(id).orElseThrow(() -> new SheepException("Sheep not found"));
 
-        if (sheep.getActivity()==null){
-            Activity activity = new Activity(dto.getDateActivity(),dto.getActivity());
+        if (sheep.getActivity() == null) {
+            Activity activity = new Activity(dto.getDateActivity(), dto.getActivity());
             sheep.setActivity(activity);
         } else {
             Activity activity = sheep.getActivity();
@@ -157,12 +179,11 @@ public class SheepService {
     }
 
     public void activityCompleted(String id) {
-        Sheep sheep = repository.findById(id).orElseThrow(()-> new SheepException("Sheep not found"));
-        if (sheep.getActivity()==null){
+        Sheep sheep = repository.findById(id).orElseThrow(() -> new SheepException("Sheep not found"));
+        if (sheep.getActivity() == null) {
             throw new SheepException("This sheep dont have any activity");
-        }
-        else{
-            Activity activity = acitivityRepository.findById(sheep.getActivity().getId()).orElseThrow(()-> new SheepException("Activity not found"));
+        } else {
+            Activity activity = acitivityRepository.findById(sheep.getActivity().getId()).orElseThrow(() -> new SheepException("Activity not found"));
             sheep.setActivity(null);
             repository.save(sheep);
             acitivityRepository.delete(activity);
@@ -170,27 +191,27 @@ public class SheepService {
     }
 
     @Transactional
-    public void addKinship(String id, KinshipDTO dto){
-        Sheep sheep = repository.findById(id).orElseThrow(()-> new SheepException("Sheep not found"));
+    public void addKinship(String id, KinshipDTO dto) {
+        Sheep sheep = repository.findById(id).orElseThrow(() -> new SheepException("Sheep not found"));
 
-        Sheep sheepMae = repository.findById(dto.getIdMae()).orElseThrow(()-> new SheepException("This mother id dosent exist"));
-        if(sheepMae.getSex()!= SheepSex.FEMEA){
+        Sheep sheepMae = repository.findById(dto.getIdMae()).orElseThrow(() -> new SheepException("This mother id dosent exist"));
+        if (sheepMae.getSex() != SheepSex.FEMEA) {
             throw new SheepException("This ID is not ID of a mother");
-        } else if (dto.getIdMae().equals(id)){
+        } else if (dto.getIdMae().equals(id)) {
             throw new SheepException("The id of mather and cub cannot be equal");
         }
 
-        Sheep sheepPai = repository.findById(dto.getIdPai()).orElseThrow(()-> new SheepException("This father id dosent exist"));
-        if(sheepPai.getSex()!= SheepSex.MACHO){
+        Sheep sheepPai = repository.findById(dto.getIdPai()).orElseThrow(() -> new SheepException("This father id dosent exist"));
+        if (sheepPai.getSex() != SheepSex.MACHO) {
             throw new SheepException("This ID is not ID of a father");
-        }else if (dto.getIdPai().equals(id)){
+        } else if (dto.getIdPai().equals(id)) {
             throw new SheepException("The id of father and cub cannot be equal");
         }
 
-        if(sheep.getKinship()==null){
+        if (sheep.getKinship() == null) {
             Kinship kinship = new Kinship(dto.getIdPai(), dto.getIdMae());
             sheep.setKinship(kinship);
-        }else{
+        } else {
             Kinship kinship = sheep.getKinship();
             kinship.setIdPai(dto.getIdPai());
             kinship.setIdMae(dto.getIdMae());

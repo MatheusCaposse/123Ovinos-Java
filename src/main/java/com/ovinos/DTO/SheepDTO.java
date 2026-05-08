@@ -1,6 +1,8 @@
 package com.ovinos.DTO;
 
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.ovinos.entity.Batch;
+import com.ovinos.entity.Enum.SheepSex;
 import com.ovinos.entity.auxiliarData.Characteristics;
 import com.ovinos.entity.superClass.Sheep;
 
@@ -17,6 +19,10 @@ public class SheepDTO {
 
     private Date dataNascimento;
     private Double peso;
+
+    private SheepSex sex;
+
+    private Batch batch;
 
     private Characteristics characteristics;
 
@@ -35,6 +41,22 @@ public class SheepDTO {
 
     public void setCharacteristics(Characteristics characteristics) {
         this.characteristics = characteristics;
+    }
+
+    public Batch getBatch() {
+        return batch;
+    }
+
+    public void setBatch(Batch batch) {
+        this.batch = batch;
+    }
+
+    public SheepSex getSex() {
+        return sex;
+    }
+
+    public void setSex(SheepSex sex) {
+        this.sex = sex;
     }
 
     public Double getPeso() {
