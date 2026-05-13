@@ -2,6 +2,7 @@ package com.ovinos.service;
 
 import com.ovinos.DTO.*;
 import com.ovinos.entity.Batch;
+import com.ovinos.entity.Enum.Alert;
 import com.ovinos.entity.Enum.SheepSex;
 import com.ovinos.entity.Female;
 import com.ovinos.entity.Male;
@@ -235,6 +236,11 @@ public class SheepService {
         }
 
         repository.save(sheep);
+    }
+
+    public List<Alert> getAlert(){
+        List<Alert> list = Alert.getAlerts();
+        return list;
     }
 
     @Transactional

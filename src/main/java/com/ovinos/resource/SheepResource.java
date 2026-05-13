@@ -71,7 +71,13 @@ public class SheepResource {
         return ResponseEntity.ok().body(obj);
     }
 
-    @PostMapping(value = "/treatmentCompleted/{id}")
+    @GetMapping(value = "/notes")
+    public ResponseEntity<List<Alert>> getAlerts(){
+        List<Alert> list = sheepService.getAlert();
+        return ResponseEntity.ok().body(list);
+    }
+
+    @PostMapping(value = "/{id}/treatmentCompleted")
     public ResponseEntity<Void> treatmentCompleted (@PathVariable String id){
         sheepService.treatmentCompleted(id);
         return ResponseEntity.noContent().build();
@@ -84,7 +90,7 @@ public class SheepResource {
     }
 
 
-    @PostMapping(value = "/activityCompleted/{id}")
+    @PostMapping(value = "/{id}/activityCompleted")
     public ResponseEntity<Void> activityCompleted(@PathVariable String id){
         sheepService.activityCompleted(id);
         return ResponseEntity.noContent().build();

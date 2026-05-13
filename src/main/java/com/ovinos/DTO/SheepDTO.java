@@ -18,7 +18,6 @@ public class SheepDTO {
     private String id;
 
     private Date dataNascimento;
-    private Double peso;
 
     private SheepSex sex;
 
@@ -31,16 +30,10 @@ public class SheepDTO {
     public SheepDTO(Sheep sheep) {
         this.id = sheep.getId();
         this.dataNascimento = sheep.getDataNascimento();
-        this.peso = sheep.getWeight().getCurrentWeight();
-        this.characteristics = sheep.getCharacteristics();
-    }
-
-    public Characteristics getCharacteristics() {
-        return characteristics;
-    }
-
-    public void setCharacteristics(Characteristics characteristics) {
-        this.characteristics = characteristics;
+        this.sex = sheep.getSex();
+        if(sheep.getBatch()!=null){
+            this.batch = sheep.getBatch();
+        }
     }
 
     public Batch getBatch() {
@@ -51,20 +44,10 @@ public class SheepDTO {
         this.batch = batch;
     }
 
-    public SheepSex getSex() {
-        return sex;
-    }
+    public SheepSex getSex() {return sex;}
 
     public void setSex(SheepSex sex) {
         this.sex = sex;
-    }
-
-    public Double getPeso() {
-        return peso;
-    }
-
-    public void setPeso(Double peso) {
-        this.peso = peso;
     }
 
     public Date getDataNascimento() {
