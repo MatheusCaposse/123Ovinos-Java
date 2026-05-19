@@ -31,6 +31,7 @@ public class SecurityConfigurator {
                         .requestMatchers("/sheep/**").permitAll()
                         .requestMatchers("/batch/**").permitAll()
                         .requestMatchers("/deads/**").permitAll()
+                        .requestMatchers("/activity/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .formLogin(Customizer.withDefaults());
