@@ -45,6 +45,7 @@ public class SecurityConfigurator {
                         .requestMatchers(HttpMethod.GET, "/deads/**").permitAll()
                         .requestMatchers(HttpMethod.PUT, "/deads/**").authenticated()
                         .requestMatchers(HttpMethod.POST, "/deads/**").authenticated()
+                        .requestMatchers(HttpMethod.DELETE, "/deads/**").authenticated()
 
                         .requestMatchers(HttpMethod.GET, "/activity/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/activity/**").authenticated()
