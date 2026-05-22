@@ -23,6 +23,11 @@ public class ActivityController {
         return ResponseEntity.ok().body(activityService.findAll());
     }
 
+    @GetMapping(value = "/{id}")
+    public ResponseEntity<Activity> findById(@PathVariable Long id){
+        return ResponseEntity.ok().body(activityService.findById(id));
+    }
+
     @GetMapping(value = "/today")
     public ResponseEntity<Integer> activiyToday(){
         return ResponseEntity.ok().body(activityService.getActivityToday());

@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ActivityService {
@@ -20,6 +21,11 @@ public class ActivityService {
     public List<Activity> findAll(){
         List<Activity> list = repository.findAll();
         return list;
+    }
+
+    public Activity findById(Long id){
+        Activity obj = repository.findById(id).orElseThrow(()-> new ActivityException("Atividade não encontrada"));
+        return obj;
     }
 
     public Integer getActivityToday(){
